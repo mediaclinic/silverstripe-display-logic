@@ -1,6 +1,6 @@
-<div id="$Name" class="field $extraClass $HolderClasses" $HolderAttributes <% if DisplayLogic %>data-display-logic-masters="$DisplayLogicMasters"<% end_if %>>
+<div id="$Name" class="field $HolderClasses" $HolderAttributes <% if DisplayLogic %>data-display-logic-masters="$DisplayLogicMasters"<% end_if %>>
     <label class="control-label" for="$ID">$Title</label>
-    <div class="controls">
+    <div>
         $Field
         
         <% if HelpText %>
