@@ -3,20 +3,19 @@
     "replace": {
     	"silverstripe/display-logic": "*"
     },
-    "description": "Allows assignment of conditions for display and hide of specific form fields based on client side behavior. A special fork for Bootstrap 3 css framework. Original by Uncle Cheese.",
+    "description": "Allows assignment of conditions for display and hide of specific form fields based on client side behavior.",
     "type": "silverstripe-module",
     "keywords": ["silverstripe", "display", "logic", "forms", "cms"],
 	"license": "BSD-3-Clause",
     "authors": [
     {
-        "name": "mediaclinic",
-        "email": "shrike@iki.fi"
+        "name": "Uncle Cheese",
+        "email": "unclecheese@leftandmain.com"
     }
     ],
     "require":
     {
-        "silverstripe/framework": "3.*",
-	    "silverstripe/cms": "3.*"
+        "silverstripe/framework": "3.*"
     },
     "extra": {
 	"installer-name": "display_logic"

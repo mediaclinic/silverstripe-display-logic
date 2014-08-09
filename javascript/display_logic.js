@@ -117,9 +117,12 @@
 	$('.field.optionset.checkboxset').entwine({
 
 		evaluateHasCheckedOption: function(val) {
-			this.find(':checkbox').filter(':checked').each(function() {
-				return $(this).val() === val || $(this).getLabel() === val;
+			var found = false;
+			this.find(':checkbox').filter(':checked').each(function() {				
+				found = (found || ($(this).val() === val || $(this).getLabel().text() === val));
 			})
+
+			return found;
 		},
 
 		evaluateHasCheckedAtLeast: function(num) {
@@ -157,10 +160,10 @@
 
 
 
-	$('.field.display-logic-master :text, .field.display-logic-master :hidden, .field.display-logic-master select').entwine({
-		onmatch: function() {
-			this.closest(".field").notify();
-		},
+	$('.field.display-logic-master :text, .field.display-logic-master :hidden:not(option), .field.display-logic-master select').entwine({
+  		onmatch: function() {
+  			this.closest(".field").notify();
+  		},
 
 		onchange: function() {
 			this.closest(".field").notify();
