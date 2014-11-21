@@ -1,5 +1,5 @@
 <div id="$Name" class="field $extraClass $HolderClasses" $HolderAttributes <% if DisplayLogic %>data-display-logic-masters="$DisplayLogicMasters"<% end_if %>>
-    <div>
+    <div class="controls">
         <label class="checkbox" for="$ID">
             <input $AttributesHTML>
             $Title

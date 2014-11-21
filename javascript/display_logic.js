@@ -77,7 +77,7 @@
 
 
 
-	$('.field.display-logic').entwine({
+	$('.field.display-logic:not(.readonly)').entwine({
 		onmatch: function () {
 			masters = this.getMasters();			
 			for(m in masters) {
@@ -157,13 +157,10 @@
 	});
 
 
-
-
-
 	$('.field.display-logic-master :text, .field.display-logic-master :hidden:not(option), .field.display-logic-master select').entwine({
-  		onmatch: function() {
-  			this.closest(".field").notify();
-  		},
+		onmatch: function() {
+			this.closest(".field").notify();
+		},
 
 		onchange: function() {
 			this.closest(".field").notify();

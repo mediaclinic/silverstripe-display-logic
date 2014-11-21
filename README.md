@@ -1,7 +1,7 @@
 # Display Logic Module for SilverStripe 3
 
 ## Description
-The Display Logic module allows you to add conditions for displaying or hiding certain form fields based on client-side behavior. Special version for Bootstrap 3 use.
+The Display Logic module allows you to add conditions for displaying or hiding certain form fields based on client-side behavior.
 
 ## Example usage
 ```php
