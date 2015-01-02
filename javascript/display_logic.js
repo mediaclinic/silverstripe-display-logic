@@ -1,14 +1,21 @@
 (function($) {
-//$.entwine('ss', function($) {
 
-	$('.field').entwine({
+	$('form :input').entwine({
+
+		onmatch: function () {
+			var masters = this.getMasters();				
+			for(m in masters) {	
+				this.closest('form').find('[name='+masters[m]+']:input').addClass("display-logic-master");				
+
+			}
+		},
 
 		getFormField: function() {
-			return this.find('[name='+this.getFieldName()+']');
+			return this;
 		},
 
 		getFieldName: function() {
-			return this.attr('id');
+			return this.getFormField().attr('name');
 		},
 
 
@@ -16,26 +23,50 @@
 			return this.getFormField().val();
 		},
 
+
+		getHolder: function () {
+			return $('#'+this.getFieldName());
+		},
+
+
+		getLogic: function() {
+			return $.trim(this.getFormField().data('display-logic-eval'));
+		},
+
+		parseLogic: function() {
+			var js = this.getLogic();			
+			var result = new Function("return " + js).bind(this)();			
+			
+			return result;
+		},
+
+		getMasters: function() {
+			var masters = this.getFormField().data('display-logic-masters');
+
+			return (masters) ? masters.split(",") : [];
+		},
+
+
 		evaluateEqualTo: function(val) {			
-			return this.getFieldValue() === val;
+			return this.getFieldValue() === val;		
 		},
 
 		evaluateNotEqualTo: function(val) {
 			return this.getFieldValue() !== val;
 		},
 
-		evaluateLessThan: function(val) {
-			num = parseFloat(val);
+		evaluateLessThan: function(val) {			
+			var num = parseFloat(val);
 			return this.getFieldValue() < num;
 		},
 
-		evaluateGreaterThan: function(val) {
-			num = parseFloat(val);
+		evaluateGreaterThan: function(val) {			
+			var num = parseFloat(val);
 			return parseFloat(this.getFieldValue()) > num;
 		},
 
 		evaluateLessThan: function(val) {
-			num = parseFloat(val);
+			var num = parseFloat(val);
 			return parseFloat(this.getFieldValue()) < num;
 		},
 
@@ -60,8 +91,8 @@
 		},
 
 		evaluateBetween: function(minmax) {
-			v = parseFloat(this.getFieldValue());
-			parts = minmax.split("-");
+			var v = parseFloat(this.getFieldValue());
+			var parts = minmax.split("-");
 			if(parts.length === 2) {				
 				return v > parseFloat(parts[0]) && v < parseFloat(parts[1]);
 			}
@@ -76,49 +107,39 @@
 	});
 
 
+	$('form :radio').entwine({
 
-	$('.field.display-logic:not(.readonly)').entwine({
-		onmatch: function () {
-			masters = this.getMasters();			
-			for(m in masters) {
-				this.closest('form').find('#'+masters[m]).addClass("display-logic-master");				
-			}
-		},
-
-		getLogic: function() {
-			return $.trim(this.find('.display-logic-eval').text());
-		},
-
-		parseLogic: function() {
-			js = this.getLogic();
-			result = eval(js);			
-			return result;
-		},
-
-		getMasters: function() {
-			var masters = this.data('display-logic-masters');
-
-			return (masters) ? masters.split(",") : [];
-		}
-
-	});
-
-
-	$('.field.optionset').entwine({
 
 		getFormField: function() {
-			f = this._super().filter(":checked");			
+			var f = this.closest('[name='+this.attr('name')+']');
+			
 			return f;
+		},
+
+
+		getFieldValue: function () {
+			return this.getHolder().find(':checked').val();
 		}
 
 	});
 
 
-	$('.field.optionset.checkboxset').entwine({
+	$('form :checkbox').entwine({
+
+		getFormField: function() {
+			var f = this.closest('[name='+this.attr('name').split('[')[0]+']');
+			
+			return f;
+		},
+
+
+		getFieldValue: function () {
+			return this.getHolder().find(':checked').val();
+		},
 
 		evaluateHasCheckedOption: function(val) {
 			var found = false;
-			this.find(':checkbox').filter(':checked').each(function() {				
+			this.getFormField().find(':checkbox').filter(':checked').each(function() {				
 				found = (found || ($(this).val() === val || $(this).getLabel().text() === val));
 			})
 
@@ -126,61 +147,51 @@
 		},
 
 		evaluateHasCheckedAtLeast: function(num) {
-			return this.find(':checked').length >= num;
+			return this.getFormField().find(':checked').length >= num;
 		},
 
 		evaluateHasCheckedLessThan: function(num) {
-			return this.find(':checked').length <= num;	
-		}
-	});
+			return this.getFormField().find(':checked').length <= num;	
+		},
 
-
-	$('.field input[type=checkbox]').entwine({
 		getLabel: function() {
 			return this.closest('form').find('label[for='+this.attr('id')+']');
 		}
-	})
+
+	});
 
 
 
-	$('.field.display-logic.display-logic-display').entwine({
+	$('form .display-logic-display').entwine({
 		testLogic: function() {
-			this.toggle(this.parseLogic());
+			this.getHolder().toggle(!!this.parseLogic());
 		}
 	});
 
 
-	$('.field.display-logic.display-logic-hide').entwine({
-		testLogic: function() {
-			this.toggle(!this.parseLogic());
+	$('form .display-logic-hide').entwine({
+		testLogic: function() {	
+			this.getHolder().toggle(!this.parseLogic());
 		}
 	});
 
 
-	$('.field.display-logic-master :text, .field.display-logic-master :hidden:not(option), .field.display-logic-master select').entwine({
-		onmatch: function() {
-			this.closest(".field").notify();
+	$('form .display-logic-master:input').entwine({
+		onmatch: function() {		
+			this.notify();
 		},
 
 		onchange: function() {
-			this.closest(".field").notify();
+			this.notify();
+		},
+
+		getIdentifier: function () {
+			return this.getHolder().attr('id');
 		}
 	});
 	
 
-	$('.field.display-logic-master :checkbox, .field.display-logic-master :radio').entwine({
-		onmatch: function() {			
-			this.closest(".field").notify();
-		},
-
-		onclick: function() {			
-			this.closest(".field").notify();
-		}
-	});
-
-
-
-	$('.field.display-logic-master').entwine({
+	$('form .display-logic-master').entwine({
 		Listeners: null,
 
 		notify: function() {
@@ -194,11 +205,11 @@
 				return l;
 			}
 			var self = this;
-			var listeners = [];
+			var listeners = [];			
 			this.closest("form").find('.display-logic').each(function() {
 				masters = $(this).getMasters();
-				for(m in  masters) {
-					if(masters[m] == self.attr('id')) {
+				for(m in  masters) {					
+					if(masters[m] == self.getIdentifier()) {						
 						listeners.push($(this));
 						break;
 					}
@@ -210,18 +221,4 @@
 	});
 
 
-	$('.field.display-logic-master.checkboxset').entwine({
-
-	})
-
-
-
-
-	$('.field.display-logic *').entwine({
-		getHolder: function() {
-			return this.closest('.display-logic');
-		}
-	});
-
-//})
 })(jQuery);

@@ -52,7 +52,7 @@ $shipping->displayIf("ProductType")->isEqualTo("furniture")
 			TextField::create("Name","Name of event"),
 			TextField::create("VenueSize","Size of venue"),
 			$refreshments = CheckboxField::create("Refreshments","This is a large venue. Are there refreshments?"),							
-			$vendors = CheckboxSetField::create("Vendors","Vendors", StaffMember::get()->map()),				
+			$vendors = CheckboxSetField::create("Vendors","Vendors", Member::get()->map()),				
 			$tent = TextField::create("TentSize","You're going to need a tent. What size is it?"),
 
 			OptionSetField::create("LinkType", "", array('internal' => 'Link to an internal page', 'external' => 'Link to an external page')),

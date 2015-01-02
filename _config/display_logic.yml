@@ -18,3 +18,5 @@ DisplayLogicCriteria:
 FormField:
   extensions:
     - DisplayLogicFormField
+DisplayLogic:
+  jquery_included: true

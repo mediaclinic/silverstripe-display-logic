@@ -86,7 +86,7 @@ class DisplayLogicFormField extends DataExtension {
 	 *
 	 * @return  string
 	 */
-	public function DisplayLogicMasters() {
+	public function getDisplayLogicMasters() {
 		if($this->displayLogicCriteria) {
 			return implode(",",array_unique($this->displayLogicCriteria->getMasterList()));			
 		}
@@ -99,19 +99,18 @@ class DisplayLogicFormField extends DataExtension {
 	 *
 	 * @return  string
 	 */
-	public function DisplayLogic() {
-		if($this->displayLogicCriteria) {
-			Requirements::javascript(THIRDPARTY_DIR.'/jquery-entwine/dist/jquery.entwine-dist.js');
-			Requirements::javascript(DISPLAY_LOGIC_DIR.'/javascript/display_logic.js');
-			Requirements::css(DISPLAY_LOGIC_DIR.'/css/display_logic.css');
-
-			return $this->displayLogicCriteria->toScript();
-		}
+	public function onBeforeRender($obj) {
+		if(!$this->displayLogicCriteria) return;
 		
-		return false;
+		if(!Config::inst()->get('DisplayLogic', 'jquery_included')) {
+			Requirements::javascript(THIRDPARTY_DIR.'/jquery/jquery.js');
+		}
+		Requirements::javascript(THIRDPARTY_DIR.'/jquery-entwine/dist/jquery.entwine-dist.js');
+		Requirements::javascript(DISPLAY_LOGIC_DIR.'/javascript/display_logic.js');
+		Requirements::css(DISPLAY_LOGIC_DIR.'/css/display_logic.css');
+
+		$obj->setAttribute('data-display-logic-masters', $this->getDisplayLogicMasters());
+		$obj->setAttribute('data-display-logic-eval', $this->displayLogicCriteria->toScript());		
 	}
-
-
-
 
 }
